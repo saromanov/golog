@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 
 	"github.com/saromanov/golog"
@@ -18,4 +19,8 @@ func main() {
 		l.SetOutput(os.Stdout)
 	})
 	g.Infof("test")
+	g.InfofCustom(&golog.Record{
+		Error:  errors.New("data"),
+		Fields: &logrus.Fields{"ddd": "Aaa"},
+	}, "test")
 }

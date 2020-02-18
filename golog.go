@@ -19,6 +19,11 @@ const (
 	Panic
 )
 
+type Record struct {
+	Error  error
+	Fields *logrus.Fields
+}
+
 // GoLog implements wrapper over logs
 type GoLog struct {
 	logger       *logrus.Logger
@@ -72,6 +77,25 @@ func (g *GoLog) Infof(format string, data ...interface{}) {
 		return
 	}
 	g.logger.Infof(format, data...)
+}
+
+// InfofCustom for info errors
+func (g *GoLog) InfofCustom(r *Record, format string, data ...interface{}) {
+	if g.minShowLevel > Info {
+		return
+	}
+	if r == nil {
+		g.logger.Infof(format, data...)
+		return
+	}
+	log := logrus.NewEntry(g.logger)
+	if r.Fields != nil {
+		log = log.WithFields(*r.Fields)
+	}
+	if r.Error != nil {
+		log = log.WithError(r.Error)
+	}
+	log.Infof(format, data...)
 }
 
 // Errorf for errors with "Error" level
