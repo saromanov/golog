@@ -27,11 +27,17 @@ type GoLog struct {
 
 // New creates GoLog
 func New(c *Config) *GoLog {
+	l := logrus.New()
 	r := &GoLog{
-		logger: logrus.New(),
+		logger: l,
 	}
 	if c != nil {
 		r.minShowLevel = c.MinShowLevel
+		if len(c.Hooks) > 0 {
+			for _, h := range c.Hooks {
+				l.AddHook(h)
+			}
+		}
 	}
 	return r
 }
