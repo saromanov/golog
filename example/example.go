@@ -2,12 +2,16 @@ package main
 
 import (
 	"os"
-	"github.com/sirupsen/logrus"
+
 	"github.com/saromanov/golog"
+	"github.com/sirupsen/logrus"
 )
-func main(){
-	g := golog.New()
-	g.Before(func(l *logrus.Logger){
+
+func main() {
+	g := golog.New(&golog.Config{
+		MinShowLevel: golog.Debug,
+	})
+	g.Before(func(l *logrus.Logger) {
 		l.SetFormatter(&logrus.TextFormatter{
 			FullTimestamp: true,
 		})

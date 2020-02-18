@@ -26,10 +26,14 @@ type GoLog struct {
 }
 
 // New creates GoLog
-func New() *GoLog {
-	return &GoLog{
+func New(c *Config) *GoLog {
+	r := &GoLog{
 		logger: logrus.New(),
 	}
+	if c != nil {
+		r.minShowLevel = c.MinShowLevel
+	}
+	return r
 }
 
 // Before implements steps for running before starting of logger
