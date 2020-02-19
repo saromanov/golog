@@ -28,6 +28,7 @@ type Record struct {
 type GoLog struct {
 	logger       *logrus.Logger
 	minShowLevel Level
+	fields       logrus.Fields
 }
 
 // New creates GoLog
@@ -79,6 +80,16 @@ func (g *GoLog) Infof(format string, data ...interface{}) {
 	g.logger.Infof(format, data...)
 }
 
+func (g *GoLog) infof(format string, data ...interface{}) {
+	if g.minShowLevel > Info {
+		return
+	}
+	if len(g.fields) > 0 {
+		g.logger.WithFields(g.fields).Infof(format, data...)
+	}
+	g.logger.Infof(format, data...)
+}
+
 // InfofCustom for info errors
 func (g *GoLog) InfofCustom(r *Record, format string, data ...interface{}) {
 	if g.minShowLevel > Info {
@@ -120,4 +131,10 @@ func (g *GoLog) Warningf(format string, data ...interface{}) {
 		return
 	}
 	g.logger.Warningf(format, data...)
+}
+
+// WithField provides setting of fields to the response
+func (g *GoLog) WithField(key string, value interface{}) *GoLog {
+	g.fields[key] = value
+	return g
 }
