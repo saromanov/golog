@@ -19,11 +19,6 @@ const (
 	Panic
 )
 
-type Record struct {
-	Error  error
-	Fields *logrus.Fields
-}
-
 // GoLog implements wrapper over logs
 type GoLog struct {
 	logger       *logrus.Logger
@@ -36,6 +31,7 @@ func New(c *Config) *GoLog {
 	l := logrus.New()
 	r := &GoLog{
 		logger: l,
+		fields: logrus.Fields{},
 	}
 	if c != nil {
 		r.minShowLevel = c.MinShowLevel
@@ -74,10 +70,7 @@ func (g *GoLog) Fatalf(format string, data ...interface{}) {
 
 // Infof for info errors
 func (g *GoLog) Infof(format string, data ...interface{}) {
-	if g.minShowLevel > Info {
-		return
-	}
-	g.logger.Infof(format, data...)
+	g.infof(format, data...)
 }
 
 func (g *GoLog) infof(format string, data ...interface{}) {
@@ -86,27 +79,9 @@ func (g *GoLog) infof(format string, data ...interface{}) {
 	}
 	if len(g.fields) > 0 {
 		g.logger.WithFields(g.fields).Infof(format, data...)
+		g.fields = logrus.Fields{}
 	}
 	g.logger.Infof(format, data...)
-}
-
-// InfofCustom for info errors
-func (g *GoLog) InfofCustom(r *Record, format string, data ...interface{}) {
-	if g.minShowLevel > Info {
-		return
-	}
-	if r == nil {
-		g.logger.Infof(format, data...)
-		return
-	}
-	log := logrus.NewEntry(g.logger)
-	if r.Fields != nil {
-		log = log.WithFields(*r.Fields)
-	}
-	if r.Error != nil {
-		log = log.WithError(r.Error)
-	}
-	log.Infof(format, data...)
 }
 
 // Errorf for errors with "Error" level
