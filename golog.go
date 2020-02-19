@@ -70,18 +70,14 @@ func (g *GoLog) Fatalf(format string, data ...interface{}) {
 
 // Infof for info errors
 func (g *GoLog) Infof(format string, data ...interface{}) {
-	g.infof(format, data...)
+	g.output(g.makeData().Infof, format, data...)
 }
 
-func (g *GoLog) infof(format string, data ...interface{}) {
+func (g *GoLog) output(f func(string, ...interface{}), format string, data ...interface{}) {
 	if g.minShowLevel > Info {
 		return
 	}
-	if len(g.fields) > 0 {
-		g.logger.WithFields(g.fields).Infof(format, data...)
-		g.fields = logrus.Fields{}
-	}
-	g.logger.Infof(format, data...)
+	f(format, data...)
 }
 
 // Errorf for errors with "Error" level
@@ -112,4 +108,15 @@ func (g *GoLog) Warningf(format string, data ...interface{}) {
 func (g *GoLog) WithField(key string, value interface{}) *GoLog {
 	g.fields[key] = value
 	return g
+}
+
+// makeData provides making of additional things for logger
+// like fields, errors. etc
+func (g *GoLog) makeData() *logrus.Entry {
+	entry := logrus.NewEntry(g.logger)
+	if len(g.fields) > 0 {
+		entry = entry.WithFields(g.fields)
+		g.fields = logrus.Fields{}
+	}
+	return entry
 }
