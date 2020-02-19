@@ -65,7 +65,7 @@ func (g *GoLog) Fatalf(format string, data ...interface{}) {
 	if g.minShowLevel > Fatal {
 		return
 	}
-	g.logger.Fatalf(format, data...)
+	g.output(g.makeData().Fatalf, format, data...)
 }
 
 // Infof for info errors
@@ -85,7 +85,7 @@ func (g *GoLog) Errorf(format string, data ...interface{}) {
 	if g.minShowLevel > Error {
 		return
 	}
-	g.logger.Errorf(format, data...)
+	g.output(g.makeData().Errorf, format, data...)
 }
 
 // Panicf for panic errors
@@ -93,7 +93,7 @@ func (g *GoLog) Panicf(format string, data ...interface{}) {
 	if g.minShowLevel > Panic {
 		return
 	}
-	g.logger.Panicf(format, data...)
+	g.output(g.makeData().Panicf, format, data...)
 }
 
 // Warningf for warning errors
@@ -101,7 +101,7 @@ func (g *GoLog) Warningf(format string, data ...interface{}) {
 	if g.minShowLevel > Warning {
 		return
 	}
-	g.logger.Warningf(format, data...)
+	g.output(g.makeData().Warningf, format, data...)
 }
 
 // WithField provides setting of fields to the response
