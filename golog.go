@@ -54,6 +54,7 @@ func (g *GoLog) Before(f func(l *logrus.Logger)) {
 	f(g.logger)
 }
 
+// adding checks before execute of logging
 func (g *GoLog) beforeDefault() {
 	g.logger.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,
@@ -74,6 +75,7 @@ func (g *GoLog) Infof(format string, data ...interface{}) {
 	g.output(g.makeData().Infof, format, data...)
 }
 
+// general method for output logs
 func (g *GoLog) output(f func(string, ...interface{}), format string, data ...interface{}) {
 	if g.minShowLevel > Info {
 		return
