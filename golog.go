@@ -11,6 +11,7 @@ type Level uint
 
 const (
 	All Level = iota + 1
+	Trace
 	Debug
 	Info
 	Warning
@@ -103,6 +104,15 @@ func (g *GoLog) Warningf(format string, data ...interface{}) {
 	}
 	g.output(g.makeData().Warningf, format, data...)
 }
+
+// tarcef for trace level output
+func (g *GoLog) Tracef(format string, data ...interface{}) {
+	if g.minShowLevel > Trace {
+		return
+	}
+	g.output(g.makeData().Tracef, format, data...)
+}
+
 
 // WithField provides setting of fields to the response
 func (g *GoLog) WithField(key string, value interface{}) *GoLog {
